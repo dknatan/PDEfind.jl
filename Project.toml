@@ -1,0 +1,13 @@
+name = "PDEfind"
+uuid = "9b7e6058-0c8a-4a6c-9549-5a2bb0335ffe"
+authors = ["Natan Dominko Kobilica <natandominko@gmail.com>"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
