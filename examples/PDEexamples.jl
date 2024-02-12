@@ -54,8 +54,7 @@ function GetExampleData(
         plot!(discrete_x, solu[i, :], label="Numerical, t=$(discrete_t[i])")
         scatter!(discrete_x, u_exact(discrete_x, discrete_t[i]), label="Exact, t=$(discrete_t[i])")
     end
-    gui(plt)
 
-    return gui(plt)
+    return plt
 
 end
