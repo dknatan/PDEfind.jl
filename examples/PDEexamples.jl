@@ -56,5 +56,6 @@ function GetExampleData(
     end
     gui(plt)
 
-    return "hi"
+    return gui(plt)
+
 end
