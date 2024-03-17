@@ -155,16 +155,18 @@ end
 
 
 """ 
-    STRidge_cascade(
+    TrainSTRidge(
         theta::Matrix{Float64}, 
         dt_data_array_flat::Vector{Float64}, 
-        MyBasis::PolynomialBasis; 
-        λ::Float64 = 0.0, 
-        tol::Float64 = 0.01, 
+        poly_vectors; 
+        λ::Float64 = 1e-4, 
+        tol_multiplier::Float64 = 1e2,
         iters::Int64 = 1,
-        verbose = false
-    )    
-    Conduct sequential thresholded ridge regression. See algorithm 2!!! in Rudy et al.
+        verbose::Bool = true,
+        cond_number_multiplier::Float64 = 1e-2,
+        max_tol_iters::Int64 = 100
+    )
+    Conduct sequential thresholded ridge regression. See algorithm 2 in Rudy et al and the .pdf file attached by the author.
     Returns optimal ξ. 
 """
 function TrainSTRidge(
@@ -241,22 +243,19 @@ function TrainSTRidge(
     end
     return ξ_best, active_poly_vectors_best
 end
-# function remove_polynomial(MyBasis::PolynomialBasis, poly_vector)
-#     if poly_vector in MyBasis.poly_vectors
-#         index = findall(x->x==poly_vector, MyBasis.poly_vectors)
-#         MyBasis.poly_vectors = deleteat!(MyBasis.poly_vectors, index)    
-#         MyBasis.poly_functions = deleteat!(MyBasis.poly_functions, index)    
-#     else
-#         println("The polynomial vector $poly_vector not found in current basis.")
-#     end 
-# end
 
-# function remove_polynomials(MyBasis::PolynomialBasis, poly_vector_array)
-#     for poly_vector in poly_vector_array
-#         remove_polynomial(MyBasis, poly_vector)
-#     end 
-# end
+"""
+    function lambda_sweep(
+        lambda_range,
+        Θ::Matrix{Float64}, 
+        dt_data_array_flat::Vector{Float64},
+        poly_vectors;
+        iters::Int64 = 1,
+        cond_number_multiplier::Float64 = 1e-6
+    )
 
+    Evaluate optimal ξ at all values of `lambda_range`. Returns array of size `(length(poly_vectors), 2)` with optimal (λ, ξ_i) values for each possible polynomial. 
+"""
 function lambda_sweep(
     lambda_range,
     Θ::Matrix{Float64}, 

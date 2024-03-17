@@ -3,7 +3,7 @@ abstract type AbstractBasis end
 """
     PolynomialBasis <: AbstractBasis
 
-Basis of polynomial functions up to max_degree of n_variables 
+Basis of polynomial functions up to degree `max_degree` of `n_variables` variables.
 
 # Initialization 
 
@@ -48,8 +48,8 @@ end
 """
     polynomial_vectors(degree::Int, n_variables::Int)
 
-Returns all polynomials of degree exactly degree of n_variables.
-Returns array of arrays of length n_variables, i-th entry representing the power of i-th variable. 
+Construct all polynomials of degree exactly `degree` of `n_variables` variables.
+Returns array of arrays of length `n_variables`, `i`-th entry representing the power of `i`-th variable. 
 """
 function polynomial_vectors(degree::Int, n_variables::Int)
     if degree == 0
@@ -81,8 +81,8 @@ end
 """
     all_polynomial_vectors(max_degree::Int, n_variables::Int)
 
-Returns all polynomials up to degree max_degree. 
-Returns array of arrays of length n_variables, i-th entry representing the power of i-th variable. 
+Construct all polynomials up to degree `max_degree` of `n_variables` variables. 
+Returns array of arrays of length `n_variables`, `i`-th entry representing the power of `i`-th variable. 
 """
 function all_polynomial_vectors(max_degree::Int, n_variables::Int)
     all_poly_collection = []
@@ -98,8 +98,8 @@ end
 """
     all_polynomial_functions(max_degree::Int, n_variables::Int)
 
-Returns all polynomials up to degree max_degree. 
-Returns array of functions of n_variables. Only works for 5 variables or less.
+Construct all polynomials up to degree `max_degree` of `n_variables` variables. 
+Returns array of functions of `n_variables` variables. Only works for 5 variables or less.
 """
 function all_polynomial_functions(max_degree::Int, n_variables::Int)
     all_p = all_polynomial_vectors(max_degree, n_variables)
@@ -116,11 +116,17 @@ function all_polynomial_functions(max_degree::Int, n_variables::Int)
     elseif n_variables == 5
         return [((x, y, z, w, u) -> x^p[1] * y^p[2] * z^p[3] * w^p[4] * u^p[5]) for p in all_p]
     else
-        throw("You have more than 5 variables. You must be crazy")
+        throw("More than 5 variables not implemented. ")
     end
 end
 
+"""
+    function evaluate(basis::PolynomialBasis, variables_array)
 
+Evaluate basis functions at different values of variables.
+If `basis` includes M functions (of n variables) and the `variables_array` is an N × n array, the output is a N × M array.
+
+"""
 function evaluate(basis::PolynomialBasis, variables_array)
     return hcat([polynomial.(variables_array...) for polynomial in basis.poly_functions]...)
 end

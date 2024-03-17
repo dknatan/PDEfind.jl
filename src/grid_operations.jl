@@ -60,17 +60,14 @@ Finite difference operator for time derivative on a grid.
     TimeDerivative(
         g::TimeSpaceGrid1D; 
         order::Int = 2,
-        boundary_condition::String = "neumann"
     )
 
-with ... 
+with `order` being the order of approximation of the finite difference method. 
 
 # Fields 
 
 * `M::T`
 
-# Usage
-    TODO
 """
 struct TimeDerivative{T}
    M::T
@@ -78,59 +75,50 @@ end
 
 function TimeDerivative(
     g::TimeSpaceGrid1D; 
-    order::Int = 2,
-    boundary_condition::String = "neumann"
+    order::Int = 2
 )
     nt = g.nt
     dt = g.dt
     
     if order == 2
         M = diagm(1=>ones(nt-1)) - diagm(-1=>ones(nt-1))
-        if boundary_condition == "neumann"
-            M[1,1] = -3.0
-            M[1,2] = 4.0
-            M[1,3] = -1.0   
+        M[1,1] = -3.0
+        M[1,2] = 4.0
+        M[1,3] = -1.0   
 
-            M[nt,nt] = 3.0
-            M[nt,nt-1] = -4.0
-            M[nt,nt-2] = 1.0
-        else    
-            throw("only neumann BC (time)")
-        end
+        M[nt,nt] = 3.0
+        M[nt,nt-1] = -4.0
+        M[nt,nt-2] = 1.0
         return TimeDerivative(sparse(M./(2*dt)))
     elseif order == 4
         M = 8*(diagm(1=>ones(nt-1)) - diagm(-1=>ones(nt-1)))
         M+=-1*(diagm(2=>ones(nt-2)) - diagm(-2=>ones(nt-2)))
-        if boundary_condition == "neumann"
-            M[1,1] = -25.0
-            M[1,2] = 48.0
-            M[1,3] = -36.0
-            M[1,4] = 16.0
-            M[1,5] = -3.0
+        M[1,1] = -25.0
+        M[1,2] = 48.0
+        M[1,3] = -36.0
+        M[1,4] = 16.0
+        M[1,5] = -3.0
 
-            M[nt,nt] = 25.0
-            M[nt,nt-1] = -48.0
-            M[nt,nt-2] = 36.0
-            M[nt,nt-3] = -16.0
-            M[nt,nt-4] = 3.0
+        M[nt,nt] = 25.0
+        M[nt,nt-1] = -48.0
+        M[nt,nt-2] = 36.0
+        M[nt,nt-3] = -16.0
+        M[nt,nt-4] = 3.0
 
-            M[2,1] = 0.0
-            M[2,2] = -25.0
-            M[2,3] = 48.0
-            M[2,4] = -36.0
-            M[2,5] = 16.0
-            M[2,6] = -3.0
+        M[2,1] = 0.0
+        M[2,2] = -25.0
+        M[2,3] = 48.0
+        M[2,4] = -36.0
+        M[2,5] = 16.0
+        M[2,6] = -3.0
 
-            M[nt-1,nt] = 0.0
-            M[nt-1,nt-1] = 25.0
-            M[nt-1,nt-2] = -48.0
-            M[nt-1,nt-3] = 36.0
-            M[nt-1,nt-4] = -16.0
-            M[nt-1,nt-5] = 3.0
-            return TimeDerivative(sparse(M./(12*dt)))
-        else
-            throw("Only bc neumann. ") 
-        end
+        M[nt-1,nt] = 0.0
+        M[nt-1,nt-1] = 25.0
+        M[nt-1,nt-2] = -48.0
+        M[nt-1,nt-3] = 36.0
+        M[nt-1,nt-4] = -16.0
+        M[nt-1,nt-5] = 3.0
+        return TimeDerivative(sparse(M./(12*dt)))
     else 
         throw("Only order 2 & 4 implemented")
     end 
@@ -154,14 +142,12 @@ Finite difference operator for (1st) spatial derivative on a grid.
         boundary_condition::String = "neumann"
     )
 
-with ... 
+with `order` being the order of approximation of the finite difference method and `boundary_condition` either "periodic" or "neumann" (no periodicity).
 
 # Fields 
 
 * `M::T`
 
-# Usage
-    TODO
 """
 struct XDerivative{T}
     M::T
