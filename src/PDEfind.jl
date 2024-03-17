@@ -108,15 +108,14 @@ function STRidge_cascade(
         # Ridge regression
         N = size(theta, 1)
         # ξ = inv(theta' * theta + λ * diagm(0=>ones(size(theta, 2)))) * theta' * dt_data_array_flat
-        ξ = inv(theta' * theta ./ N + λ * diagm(0=>ones(size(theta, 2)))) * theta' * dt_data_array_flat ./ N
-        ξ .*= norm_facts
-
+        ξ_norm = (theta' * theta ./ N + λ .* diagm(0=>ones(size(theta, 2)))) \ theta' * dt_data_array_flat ./ N
+        ξ = ξ_norm ./ norm_facts
         # Threshold
         bigcoeffs = abs.(ξ) .> tol
         
         if verbose
             _print_tool(active_poly_vectors, ξ, tol, iters)
-        end
+        end 
 
         # Base case
         if iters == 1
@@ -137,10 +136,11 @@ function STRidge_cascade(
             norm_facts[1] = 1.0
         end
 
-        theta ./= norm_facts 
+        theta_norm = theta ./ norm_facts 
         
         norm_facts = reshape(norm_facts, size(norm_facts, 2))
     else
+        theta_norm = copy(theta)
         norm_facts = ones(size(theta, 2))
     end 
 
@@ -150,7 +150,7 @@ function STRidge_cascade(
     # # Final non-ridge regression
     # ξ = inv(theta_final' * theta_final) * theta_final' * dt_data_array_flat
     
-    return STRidge_recursive(theta, dt_data_array_flat, poly_vectors, norm_facts; λ=λ, tol=tol, iters=iters)
+    return STRidge_recursive(theta_norm, dt_data_array_flat, poly_vectors, norm_facts; λ=λ, tol=tol, iters=iters)
 end
 
 
@@ -232,7 +232,7 @@ function TrainSTRidge(
             else
                 # take step
                 ξ_best, active_poly_vectors_best, error_best = ξ, active_poly_vectors, error
-                tol_multiplier *= 2. # just a speed up i think
+                # tol_multiplier *= 2. # just a speed up i think
                 if verbose 
                     println("tol_iter = $tol_iter: Found better/equal fit with polynomials $active_poly_vectors_best, xi = $ξ_best. Decreased Threshold to $tol. ")
                 end    
