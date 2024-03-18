@@ -34,7 +34,7 @@ end
 function PolynomialBasis(
     max_degree::Int,
     n_variables::Int;
-    skip_constant::Bool=true
+    skip_constant::Bool=false
 )
     poly_vectors = all_polynomial_vectors(max_degree, n_variables)
     poly_functions = all_polynomial_functions(max_degree, n_variables)
